@@ -9,8 +9,21 @@ public class IndividualStatistics
 	
 	public static void main(String[] args) 
 	{				
-        Student s = StatisticsResource.getStudent(response(), "data.xls");		
-        err(s); 
+        Student s;
+        do
+        {
+        	long l = response();
+        	if (l != 0)
+        	{
+        		s = StatisticsResource.getStudent(l, "data.xls");
+        		err(s);
+        	}
+        	else
+        	{
+        		s = null;
+        	}
+        	
+        }while (s == null);
         
         // first and last semester, duration in school, graduated or not
         System.out.println(s.getMinSemester().getDm_month() + " " + s.getMinSemester().getDm_year() + "\t" + s.getMaxSemester().getDm_month() + 
@@ -28,7 +41,7 @@ public class IndividualStatistics
         System.out.println(s.getFinalGradesGraph());
         
         // Information on a class
-        //System.out.println(s.getSemestersTakenString(1010, "ENGL"));
+        System.out.println(s.getSemestersTakenString(1010, "ECON"));
 	}
 
 	public static long response ()
@@ -36,7 +49,16 @@ public class IndividualStatistics
 		long l;
 		Scanner student = new Scanner(System.in);
         System.out.println("Enter student's ID: ");
-        l = student.nextInt();
+        try
+        {
+        	l = student.nextInt();
+        }
+        catch (Exception e)
+        {
+        	System.out.println("You must enter a number!");
+        	l = 0;
+        }
+        
 		return l;
 	}
 	

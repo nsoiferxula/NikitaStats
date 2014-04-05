@@ -38,15 +38,14 @@ public class StatisticsResource
 		        Row row = rowIterator.next();		        		 
 		        
 		        if ((long)row.getCell(0).getNumericCellValue() == student_id)
-		        {
-		        	       	        
-		        if (ret_s == null)
-		        {
-		        	ret_s = new Student(student_id);
-		        }
-		        
-		        ret_s.addCourse(new Course(	(int)row.getCell(3).getNumericCellValue(), row.getCell(2).getStringCellValue(), (int)row.getCell(4).getNumericCellValue(),
-		        		row.getCell(5).getStringCellValue().charAt(0), row.getCell(6).getStringCellValue().charAt(0), (int)row.getCell(1).getNumericCellValue()));	        		       		    
+		        {		             	       
+			        if (ret_s == null)
+			        {
+			        	ret_s = new Student(student_id);
+			        }
+			        
+			        ret_s.addCourse(new Course(	(int)row.getCell(3).getNumericCellValue(), row.getCell(2).getStringCellValue(), (int)row.getCell(4).getNumericCellValue(),
+			        		row.getCell(5).getStringCellValue().charAt(0), row.getCell(6).getStringCellValue().charAt(0), (int)row.getCell(1).getNumericCellValue()));	        		       		    
 		        }
 		    }
 		    file.close();

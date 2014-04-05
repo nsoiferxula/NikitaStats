@@ -17,6 +17,7 @@ public class Student
 		this.dm_semesters = new ArrayList<Semester>();
 	}
 	
+	/* The course in courses is the most successful one and it has all of its attempts in a chronoligical order*/
 	public void addCourse(Course c)
 	{
 		boolean found = false;
@@ -35,8 +36,8 @@ public class Student
 		
 		if (found == true)
 		{
-			this.dm_courses.get(index).addAttempt(new Course(this.dm_courses.get(index)));
-			if (this.dm_courses.get(index).getDm_final() > c.getDm_final())
+			this.dm_courses.get(index).addAttempt(new Course(c));
+			if (this.dm_courses.get(index).getDm_final() < c.getDm_final())
 			{
 				this.dm_courses.get(index).setDm_final(c.getDm_final());
 				this.dm_courses.get(index).setDm_mid(c.getDm_mid());
@@ -127,10 +128,10 @@ public class Student
 		
 		for (int i = 0; i < dm_courses.size(); i++)
 		{
-			if (dm_courses.get(i).getDm_credits() > (int)'F')
-				continue;
-			
-			n += dm_courses.get(i).getDm_credits();
+			if (dm_courses.get(i).getDm_credits() <= (int)'F')
+			{	
+				n += dm_courses.get(i).getDm_credits();
+			}
 		}
 		
 		return n;
@@ -142,12 +143,12 @@ public class Student
 		
 		for (int i = 0; i < dm_courses.size(); i++)
 		{
-			if (dm_courses.get(i).getDm_credits() > (int)'F' ||
-				dm_courses.get(i).getDm_semester().getDm_month() != s.getDm_month() ||
-				dm_courses.get(i).getDm_semester().getDm_year() != s.getDm_year())
-				continue;
-			
-			n += dm_courses.get(i).getDm_credits();
+			if (dm_courses.get(i).getDm_credits() <= (int)'F' &&
+				dm_courses.get(i).getDm_semester().getDm_month() == s.getDm_month() &&
+				dm_courses.get(i).getDm_semester().getDm_year() == s.getDm_year())
+			{			
+				n += dm_courses.get(i).getDm_credits();
+			}
 		}
 		
 		return n;
@@ -194,10 +195,10 @@ public class Student
 		
 		for (int i = 0; i < dm_courses.size(); i++)
 		{	
-			if (dm_courses.get(i).getDm_credits() > (int)'F')
-				continue;
-			
-			grade += ('E' - dm_courses.get(i).getDm_final()) * dm_courses.get(i).getDm_credits();
+			if (dm_courses.get(i).getDm_credits() <= (int)'F')
+			{			
+				grade += ('E' - dm_courses.get(i).getDm_final()) * dm_courses.get(i).getDm_credits();
+			}
 		}
 		
 		credits = (double)this.getTotalNumOfCredits();
@@ -228,12 +229,12 @@ public class Student
 		
 		for (int i = 0; i < dm_courses.size(); i++)
 		{
-			if (dm_courses.get(i).getDm_credits() > (int)'F' ||
-				dm_courses.get(i).getDm_semester().getDm_month() != s.getDm_month() ||
-				dm_courses.get(i).getDm_semester().getDm_year() != s.getDm_year())
-				continue;
-			
-			grade += ('E' - dm_courses.get(i).getDm_final()) * dm_courses.get(i).getDm_credits();
+			if (dm_courses.get(i).getDm_credits() <= (int)'F' &&
+				dm_courses.get(i).getDm_semester().getDm_month() == s.getDm_month() &&
+				dm_courses.get(i).getDm_semester().getDm_year() == s.getDm_year())
+			{			
+				grade += ('E' - dm_courses.get(i).getDm_final()) * dm_courses.get(i).getDm_credits();
+			}
 		}
 		
 		credits = (double)this.getTotalNumOfCredits(s);
@@ -252,10 +253,10 @@ public class Student
 		
 		for (int i = 0; i < dm_courses.size(); i++)
 		{	
-			if (dm_courses.get(i).getDm_credits() > (int)'F' || dm_courses.get(i).getDm_code().compareTo("CPSC") != 0)
-				continue;
-			
-			grade += ('E' - dm_courses.get(i).getDm_final()) * dm_courses.get(i).getDm_credits();
+			if (dm_courses.get(i).getDm_credits() <= (int)'F' && dm_courses.get(i).getDm_code().compareTo("CPSC") == 0)
+			{			
+				grade += ('E' - dm_courses.get(i).getDm_final()) * dm_courses.get(i).getDm_credits();
+			}
 		}
 		
 		credits = (double)this.getTotalNumOfCreditsByCourseCode("CPSC");
@@ -284,21 +285,22 @@ public class Student
 	{
 		String s = "";
 		
-		ArrayList<Semester> a = this.getSemestersTaken(c_id, c_code); 
-		for (int i = 0; i < dm_courses.size(); i++)
+		ArrayList<Course> a = this.getSemestersTaken(c_id, c_code); 
+		for (int i = 0; i < a.size(); i++)
 		{
-			s += "Year: " + a.get(i).getDm_year() + "\n" +
-				"Month: " + a.get(i).getDm_month() + "\n\n";
+			s += "Year: " + a.get(i).getDm_semester().getDm_year() + "\n" +
+				"Month: " + a.get(i).getDm_semester().getDm_month() + "\n" + 
+				"Grade: " + a.get(i).getDm_final() + "\n\n";
 		}
 		
 		return s;
 	}
 	
-	public ArrayList<Semester> getSemestersTaken(int c_id, String c_code)
+	public ArrayList<Course> getSemestersTaken(int c_id, String c_code)
 	{
 		boolean found = false;
 		int index = 0;
-		ArrayList<Semester> tmp = new ArrayList<Semester>();
+		ArrayList<Course> tmp = new ArrayList<Course>();
 		
 		for (int i = 0; i < dm_courses.size(); i++)
 		{
@@ -314,7 +316,7 @@ public class Student
 		{
 			for (int i = 0; i < dm_courses.get(index).getAttempts().size(); i++)
 			{
-				tmp.add(dm_courses.get(index).getAttempts().get(i).getDm_semester());
+				tmp.add(dm_courses.get(index).getAttempts().get(i));
 			}
 			
 			return tmp;

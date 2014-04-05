@@ -20,7 +20,7 @@ public class Course
 		this.dm_final = final_res;
 		this.dm_semester = new Semester(start_date);
 		this.dm_attempts = new ArrayList<Course>();
-		this.dm_attempts.add(this);
+		this.dm_attempts.add(new Course(this));
 	}
 	
 	public Course(Course c)
@@ -43,13 +43,23 @@ public class Course
 	}
 	
 	public void addAttempt(Course c) {
+		/* Since the course represents the most successful one (and has itself as an attempt of its own). When we add an attempt to it we don't want 
+		 * for the attempt to have its own attempts. So just clear them out */
 		c.dm_attempts.clear();
+		boolean earlier = false;
 		for (int i = 0; i < dm_attempts.size(); i++)
 		{
 			if (c.getDm_semester().isEarlier(this.dm_attempts.get(i).getDm_semester()))
 			{
 				this.dm_attempts.add(i, c);
+				earlier = true;
+				break;
 			}
+		}
+		
+		if (!earlier)
+		{
+			this.dm_attempts.add(c);
 		}
 	}
 	
